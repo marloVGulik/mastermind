@@ -71,9 +71,13 @@ class Game {
         checkColors.style.backgroundColor = "#FFFFFF"
         checkColors.innerHTML = "CHECK";
         checkColors.addEventListener("click", function() {
+            console.log("Clicked check");
+            if(!game.gameStarted) {
+                game.newGame();
+                return;
+            }
             var continueProg = true;
             for(var i = 0; i < 4; i++) {
-                console.log(game._usedHTMLObjects.allObjArray[game.currentRow].circles[i].style.backgroundColor);
                 if(game._usedHTMLObjects.allObjArray[game.currentRow].circles[i].style.backgroundColor == "") {
                     continueProg = false;
                 }
@@ -85,25 +89,55 @@ class Game {
         colorChooser.appendChild(checkColors);
     }
     nextLine() {
-        for()
+        var white = 0;
+        var red = 0;
+        var currentBlockLoc = 0;
+        for(var i = 0; i < 4; i++) {
+            if(this._usedHTMLObjects.allObjArray[this.currentRow].circles[i].style.backgroundColor == this.enemyColor[i]) {
+                console.log("test");
+                red++;
+                this._usedHTMLObjects.allObjArray[this.currentRow].squares[currentBlockLoc].style.backgroundColor = "#FF0000";
+                currentBlockLoc++;
+            }
+        }
+        for(var i = 0; i < 4; i++) {
+            for(var j = 0; j < 4; j++) {
+                if(this._usedHTMLObjects.allObjArray[this.currentRow].circles[i].style.backgroundColor == this.enemyColor[j]) {
+                    white++;
+                }
+            }
+        }
+        console.log(white + " " + red);
+        for(var i = 0; i <  white; i++) {
+            this._usedHTMLObjects.allObjArray[this.currentRow].squares[i].style.backgroundColor = "#FFFFFF";
+        }
+        for(var i = 0; i < red; i++) {
+            this._usedHTMLObjects.allObjArray[this.currentRow].squares[i].style.backgroundColor = "#FF0000";
+        }
 
         this.currentRow--;
     }
     newGame() {
+        console.log("Game starting");
         // Clean game, generate new colors
+        this.enemyColor = [];
         for(var i = 0; i < 4; i++) {
-            newColorNumber = Math.floor()
+            var newColorNumber = this.colors[Math.floor(Math.random() * this.colors.length)];
+            this.enemyColor.push(newColorNumber);
         }
+        this.gameStarted = true;
     }
 
+    gameStarted = false;
     colors = [
-        "#FF0000",
-        "#FFFF00",
-        "#00FF00",
-        "#00FFFF",
-        "#0000FF",
-        "#FF00FF",
+        "rgb(255, 0, 0)",
+        "rgb(255, 255, 0)",
+        "rgb(0, 255, 0)",
+        "rgb(0, 255, 255)",
+        "rgb(0, 0, 255)",
+        "rgb(255, 0, 255)",
     ];
+    enemyColor = [];
 
     selectedObj = undefined;
     currentRow = 11;
