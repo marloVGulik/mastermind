@@ -18,6 +18,7 @@ class Game {
                 var circleObj = document.createElement("div");
                 circleObj.classList.add("circle");
                 circleObj.objNumber = circle;
+                circleObj.isCorrect = false;
                 circleObj.addEventListener("click", function() {
                     var otherObj = document.getElementById("chosenObject");
                     if(otherObj != null) otherObj.id = "";
@@ -94,32 +95,60 @@ class Game {
         var currentBlockLoc = 0;
         for(var i = 0; i < 4; i++) {
             if(this._usedHTMLObjects.allObjArray[this.currentRow].circles[i].style.backgroundColor == this.enemyColor[i]) {
-                console.log("test");
                 red++;
                 this._usedHTMLObjects.allObjArray[this.currentRow].squares[currentBlockLoc].style.backgroundColor = "#FF0000";
+                this._usedHTMLObjects.allObjArray[this.currentRow].circles[i].isCorrect = true;
                 currentBlockLoc++;
             }
         }
         for(var i = 0; i < 4; i++) {
+            var addWhite = true;
             for(var j = 0; j < 4; j++) {
                 if(this._usedHTMLObjects.allObjArray[this.currentRow].circles[i].style.backgroundColor == this.enemyColor[j]) {
-                    white++;
+                    if(this._usedHTMLObjects.allObjArray[this.currentRow].circles[j].isCorrect == true) {
+                        addWhite = false;
+                    }
                 }
+            }
+            if(addWhite) {
+                white++;
             }
         }
         console.log(white + " " + red);
-        for(var i = 0; i <  white; i++) {
-            this._usedHTMLObjects.allObjArray[this.currentRow].squares[i].style.backgroundColor = "#FFFFFF";
-        }
-        for(var i = 0; i < red; i++) {
-            this._usedHTMLObjects.allObjArray[this.currentRow].squares[i].style.backgroundColor = "#FF0000";
+        for(var i = 0; i < 4; i++) {
+            if(i < red) {
+                this._usedHTMLObjects.allObjArray[this.currentRow].squares[i].style.backgroundColor = "#FF0000";
+            } else if(i < red + white){
+                this._usedHTMLObjects.allObjArray[this.currentRow].squares[i].style.backgroundColor = "#FFFFFF";
+            }
         }
 
         this.currentRow--;
+        if(red == 4) {
+            this.win();
+        } else if(this.currentRow < 0) {
+            this.lose();
+        }
+    }
+    win() {
+        alert("You win");
+        this.newGame();
+    }
+    lose() {
+        alert("You lose");
+        this.newGame();
     }
     newGame() {
         console.log("Game starting");
         // Clean game, generate new colors
+        for(var row = 0; row < 12; row++) {
+            for(var circleNum = 0; circleNum < 4; circleNum++) {
+                this._usedHTMLObjects.allObjArray[row].circles[circleNum].isCorrect = false;
+                this._usedHTMLObjects.allObjArray[row].circles[circleNum].style.backgroundColor = "#000000";
+                this._usedHTMLObjects.allObjArray[row].squares[circleNum].style.backgroundColor = "#000000";
+            }
+        }
+
         this.enemyColor = [];
         for(var i = 0; i < 4; i++) {
             var newColorNumber = this.colors[Math.floor(Math.random() * this.colors.length)];
@@ -149,3 +178,5 @@ class Game {
 function selectObj(obj) {
     game.selectObj = obj;
 }
+
+alert("Press the CHECK button to start the game");
